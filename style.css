@@ -1,0 +1,111 @@
+body {
+    display: flex;
+    flex-direction: row;
+    align-items: stretch;
+    margin: 0;
+    width: 100%;
+    min-height: 100vh;
+    overflow-x: hidden;
+    overflow-y: hidden;
+}
+
+.controls {
+    --controls-width: 24em;
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    width: var(--controls-width);
+    flex-shrink: 0;
+    background: #202a20;
+    color: white;
+    box-shadow: -12px 0px 12px 12px rgba(0, 0, 0, 0.4);
+}
+
+#fen {
+    box-sizing: border-box;
+    padding: 4px;
+    background: transparent;
+    color: inherit;
+    border: none;
+    resize: none;
+    width: 100%;
+    font-size: 10pt;
+    line-break: anywhere;
+    flex-shrink: 1;
+    flex-grow: 1;
+}
+
+#fen:focus {
+    outline: none;
+}
+
+#pieces {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    --piece-per-row: 8;
+}
+
+#pieces > li {
+    width: calc(var(--controls-width) / var(--piece-per-row));
+    height: calc(var(--controls-width) / var(--piece-per-row));
+}
+
+#pieces > li > img {
+    width: calc(var(--controls-width) / var(--piece-per-row));
+    height: calc(var(--controls-width) / var(--piece-per-row));
+    background: #909090;
+    border: 1px solid transparent;
+    box-sizing: border-box;
+    transition: background-color 0.2s, border-color 0.2s;
+}
+
+#pieces > li.selected > img {
+    background: #606060;
+    border: 1px solid #202020;
+}
+
+#pieces > li > img:hover {
+    cursor: pointer;
+    background: #606060;
+    border: 1px solid #d0d0d0;
+}
+
+#pieces > li > img:active {
+    cursor: pointer;
+    border: 1px solid white;
+}
+
+
+.render {
+    flex-grow: 1;
+    height: 100vh;
+    --status-height: 28px;
+}
+
+#canvas {
+    width: 100%;
+    height: calc(100vh - var(--status-height));
+    margin: 0;
+    box-sizing: border-box;
+    object-fit: contain;
+}
+
+#status {
+    background: #202a20;
+    height: var(--status-height);
+    padding: 4px;
+    font-family: monospace;
+    box-sizing: border-box;
+}
+
+#status.ok {
+    color: #a0ffa0;
+}
+
+#status.err {
+    color: #ffa0a0;
+}
