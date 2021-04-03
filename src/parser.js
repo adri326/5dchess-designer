@@ -10,7 +10,6 @@ function parse(raw) {
     let metadata = {
         size: "8x8",
     };
-    let res = {};
     let fens = [];
     for (let match of matched) {
         let match_again = /^\s*(\w+)\s+"([^\"]+)"\s*$/.exec(match);
@@ -29,6 +28,7 @@ function parse(raw) {
         return new Error(`Unrecognized header: ${match}`);
     }
     let [width, height] = metadata.size.split("x").map(x => +x);
+    let res = {metadata, width, height};
     for (let [coords, fen] of fens) {
         let split = fen.split("/");
         let board = [];
@@ -46,7 +46,7 @@ function parse(raw) {
                     }
                     continue
                 }
-                let white = raw[0].toUpperCase() === raw[0];
+                let white = raw[0].toLowerCase() === raw[0];
                 switch (raw[0]) {
                     case 'p':
                     case 'P':
@@ -100,13 +100,13 @@ function parse(raw) {
 
                     case 'c':
                     case 'C':
-                        row.push(new Piece(PIECES.W_COMMON_KING + white * PIECES.B_OFFSET, true));
+                        row.push(new Piece(PIECES.W_CKING + white * PIECES.B_OFFSET, true));
                         break;
 
                     case 'q':
                     case 'Q':
                         if (raw[1] === "+") {
-                            row.push(new Piece(PIECES.W_ROYAL_QUEEN + white * PIECES.B_OFFSET, true));
+                            row.push(new Piece(PIECES.W_RQUEEN + white * PIECES.B_OFFSET, true));
                             raw = raw.slice(1);
                         } else {
                             row.push(new Piece(PIECES.W_QUEEN + white * PIECES.B_OFFSET, true));

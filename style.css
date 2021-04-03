@@ -84,22 +84,36 @@ body {
     flex-grow: 1;
     height: 100vh;
     --status-height: 28px;
+    position: relative;
+    display: flex;
+    flex-direction: column;
 }
 
-#canvas {
+#axes {
     width: 100%;
     height: calc(100vh - var(--status-height));
+    flex-grow: 1;
     margin: 0;
     box-sizing: border-box;
     object-fit: contain;
 }
 
+#canvas {
+    width: 100%;
+    height: calc(100vh - var(--status-height));
+    position: absolute;
+    top: 0;
+    left: 0;
+}
+
 #status {
+    flex-grow: 0;
     background: #202a20;
     height: var(--status-height);
     padding: 4px;
     font-family: monospace;
     box-sizing: border-box;
+    margin: 0;
 }
 
 #status.ok {
