@@ -23,6 +23,8 @@ let board_state = {};
 let previous_value = "";
 let clickable_regions = [];
 let position_data = null;
+
+let mouse_down = false;
 let mouse_vx = null;
 let mouse_vy = null;
 let mouse_l = null;
@@ -36,6 +38,47 @@ function update_pieces() {
         } else {
             button.className = "";
         }
+    }
+}
+
+function update_fen() {
+    let base_fen = fen_input.value;
+
+    base_fen = base_fen.replace(/\[([^\]]+)\]/g, (full, inner) => {
+        let match = /^([a-zA-Z0-9*+/]+):([+-]?\d+):(\d+):([wb])$/.exec(inner);
+        if (!match) {
+            return full;
+        }
+        let coords = +match[2] + ":" + ((+match[3] - 1) * 2 + (match[4] === "w" ? 0 : 1));
+        let board = board_state[coords];
+        let fen = "";
+        for (let row of board) {
+            let count_empty = 0;
+
+            for (let piece of row) {
+                if (piece) {
+                    if (count_empty > 0) {
+                        fen += +count_empty;
+                        count_empty = 0;
+                    }
+                    fen += PIECES_FEN[piece.id];
+                    if (PIECES_MOVED_NEEDED[piece.id] && !piece.moved) {
+                        fen += "*";
+                    }
+                } else {
+                    count_empty++;
+                }
+            }
+
+            if (count_empty > 0) fen += +count_empty;
+            fen += "/";
+        }
+        fen = fen.slice(0, -1);
+        return `[${fen}:${match[2]}:${match[3]}:${match[4]}]`;
+    });
+
+    if (fen_input.value !== base_fen) {
+        fen_input.value = base_fen;
     }
 }
 
@@ -253,4 +296,41 @@ canvas.onmousemove = (evt) => {
     mouse_vx = evt.layerX;
     mouse_vy = evt.layerY;
     update_axes();
+    if (mouse_down) {
+        drag_piece();
+    }
+}
+
+canvas.onmousedown = (evt) => {
+    mouse_down = true;
+    mouse_vx = evt.layerX;
+    mouse_vy = evt.layerY;
+    update_axes();
+    drag_piece();
+}
+
+canvas.onmouseup = (evt) => {
+    mouse_down = false;
+    mouse_vx = evt.layerX;
+    mouse_vy = evt.layerY;
+    update_axes();
+}
+
+canvas.onmouseleave = () => {
+    mouse_down = false;
+}
+
+function drag_piece() {
+    for (let region of clickable_regions) {
+        if (
+            mouse_vx >= region[0] && mouse_vx - region[0] <= region[2]
+            && mouse_vy >= region[1] && mouse_vy - region[1] <= region[3]
+        ) {
+            let board = board_state[region[4] + ":" + region[5]];
+            board[region[7]][region[6]] = selected_piece ? new Piece(selected_piece, false) : null;
+            render();
+            update_fen();
+            return
+        }
+    }
 }
