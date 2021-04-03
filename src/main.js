@@ -11,15 +11,16 @@ const height_input = document.getElementById("height");
 const empty_button = document.getElementById("empty");
 const std_button = document.getElementById("standard");
 const t0_button = document.getElementById("standard-t0");
+const dpr = window.devicePixelRatio || 1;
 
-const MARGIN = 48;
-const BOARD_MARGIN = 16;
-const BORDER_WIDTH = 4;
+const MARGIN = 48 * dpr;
+const BOARD_MARGIN = 16 * dpr;
+const BORDER_WIDTH = 4 * dpr;
 const FILL_LIGHT = "#909090";
 const FILL_DARK = "#606060";
 const AXIS_HOVER_FILL = "#80808060";
-const FONT_SIZE = 16;
-const AXES_MARGIN = 8;
+const FONT_SIZE = 16 * dpr;
+const AXES_MARGIN = 8 * dpr;
 
 let selected_piece = PIECES.BLANK;
 let piece_buttons = [];
@@ -100,8 +101,8 @@ function update_fen() {
 }
 
 function resize_canvas() {
-    canvas.width = canvas.clientWidth;
-    canvas.height = canvas.clientHeight;
+    canvas.width = canvas.clientWidth * dpr;
+    canvas.height = canvas.clientHeight * dpr;
     axes.width = canvas.width;
     axes.height = canvas.height;
 }
@@ -195,6 +196,9 @@ function render() {
                         tile_size - 4
                     );
                     ctx.strokeStyle = piece.moved ? "#000000" : "#ffffff";
+                    if (canvas.width < 600) {
+                        ctx.strokeStyle = piece.moved ? "#00000080" : "#ffffff80";
+                    }
                     ctx.lineWidth = 2;
                     if (PIECES_MOVED_NEEDED[piece.id]) ctx.stroke();
                 }
@@ -348,6 +352,8 @@ t0_button.onclick = () => {
 `;
     update_input();
 };
+// Set scrollbar width in CSS
+document.documentElement.style.setProperty('--scrollbar-width', (window.innerWidth - document.documentElement.clientWidth) + "px");
 
 Promise.all(piece_promises).then(() => {
     assets_ready = true;
@@ -363,8 +369,8 @@ window.onresize = () => {
 };
 
 canvas.onmousemove = (evt) => {
-    mouse_vx = evt.layerX;
-    mouse_vy = evt.layerY;
+    mouse_vx = evt.layerX * dpr;
+    mouse_vy = evt.layerY * dpr;
     update_axes();
     if (mouse_down) {
         drag_piece();
@@ -373,16 +379,16 @@ canvas.onmousemove = (evt) => {
 
 canvas.onmousedown = (evt) => {
     mouse_down = true;
-    mouse_vx = evt.layerX;
-    mouse_vy = evt.layerY;
+    mouse_vx = evt.layerX * dpr;
+    mouse_vy = evt.layerY * dpr;
     update_axes();
     drag_piece();
 }
 
 canvas.onmouseup = (evt) => {
     mouse_down = false;
-    mouse_vx = evt.layerX;
-    mouse_vy = evt.layerY;
+    mouse_vx = evt.layerX * dpr;
+    mouse_vy = evt.layerY * dpr;
     update_axes();
 }
 

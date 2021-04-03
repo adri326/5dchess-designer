@@ -7,10 +7,11 @@ body {
     min-height: 100vh;
     overflow-x: hidden;
     overflow-y: hidden;
+    --controls-width: 24em;
+    --piece-per-row: 8;
 }
 
 .controls {
-    --controls-width: 24em;
     display: flex;
     flex-direction: column;
     height: 100vh;
@@ -46,7 +47,6 @@ body {
     list-style: none;
     padding: 0;
     margin: 0;
-    --piece-per-row: 8;
 }
 
 #pieces > li {
@@ -182,4 +182,53 @@ body {
 
 #status.err {
     color: #ffa0a0;
+}
+
+@media (max-width: 720px) {
+    html {
+        overflow-y: scroll;
+    }
+
+    body {
+        flex-direction: column-reverse;
+        overflow-y: auto;
+        --controls-width: calc(100vw - var(--scrollbar-width, 0px));
+        --rows: 5;
+    }
+
+    .render {
+        height: calc(100vh - var(--rows) * var(--controls-width) / var(--piece-per-row));
+    }
+
+    #canvas, #axes {
+        height: calc(100vh - var(--status-height) - var(--rows) * var(--controls-width) / var(--piece-per-row));
+    }
+
+    .controls {
+        width: 100vw;
+        flex-direction: column-reverse;
+    }
+
+    #fen {
+        font-size: 12pt;
+    }
+}
+
+@media (hover: none) {
+    #pieces > li > img:hover {
+        background: #909090;
+        border: 1px solid transparent;
+    }
+
+    #pieces > li.selected > img {
+        background: #606060;
+        border: 1px solid white;
+    }
+}
+
+@media (max-width: 720px) and (min-aspect-ratio: 0.8) {
+    body {
+        --piece-per-row: 12;
+        --rows: 4;
+    }
 }
