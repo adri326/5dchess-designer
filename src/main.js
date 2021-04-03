@@ -22,6 +22,7 @@ const FILL_DARK = "#606060";
 const AXIS_HOVER_FILL = "#80808060";
 const FONT_SIZE = 16 * dpr;
 const AXES_MARGIN = 8 * dpr;
+const PLUS_SIZE = 5;
 
 let space_around = false;
 let selected_piece = PIECES.BLANK;
@@ -270,6 +271,48 @@ function update_axes() {
         axes_ctx.rect(0, sy, axes.width, position_data.board_size);
         axes_ctx.fillStyle = AXIS_HOVER_FILL;
         axes_ctx.fill();
+
+        let cx = sx + position_data.board_size / 2;
+        let cy = sy + position_data.board_size / 2;
+
+        if (space_around && board_state && !board_state[mouse_l + ":" + mouse_t]) {
+            axes_ctx.beginPath();
+            let line_width = position_data.board_size * .025;
+            axes_ctx.moveTo(
+                cx - line_width,
+                cy - line_width
+            );
+            [
+                [-1, -PLUS_SIZE],
+                [1, -PLUS_SIZE],
+                [1, -1],
+                [PLUS_SIZE, -1],
+                [PLUS_SIZE, 1],
+                [1, 1],
+                [1, PLUS_SIZE],
+                [-1, PLUS_SIZE],
+                [-1, 1],
+                [-PLUS_SIZE, 1],
+                [-PLUS_SIZE, -1],
+                [-1, -1],
+            ].forEach(([x, y]) => {
+                axes_ctx.lineTo(
+                    cx + x * line_width,
+                    cy + y * line_width
+                );
+            });
+            if (
+                mouse_vx >= cx - line_width * PLUS_SIZE
+                && mouse_vx <= cx + line_width * PLUS_SIZE
+                && mouse_vy >= cy - line_width * PLUS_SIZE
+                && mouse_vy <= cy + line_width * PLUS_SIZE
+            ) {
+                axes_ctx.fillStyle = "#ffffff80";
+            } else {
+                axes_ctx.fillStyle = "#00000060";
+            }
+            axes_ctx.fill();
+        }
     }
 
     axes_ctx.fillStyle = "#000000";
@@ -406,6 +449,39 @@ canvas.onmouseup = (evt) => {
     mouse_vx = evt.layerX * dpr;
     mouse_vy = evt.layerY * dpr;
     update_axes();
+
+    // TODO: do this on the second tap on mobile!
+    if (space_around && board_state && !board_state[mouse_l + ":" + mouse_t]) {
+        let line_width = position_data.board_size * .025;
+        let sx = position_data.sx + (mouse_t - position_data.min_t) * position_data.board_size;
+        let sy = position_data.sy + (mouse_l - position_data.min_l) * position_data.board_size;
+        let cx = sx + position_data.board_size / 2;
+        let cy = sy + position_data.board_size / 2;
+        if (
+            mouse_vx >= cx - line_width * PLUS_SIZE
+            && mouse_vx <= cx + line_width * PLUS_SIZE
+            && mouse_vy >= cy - line_width * PLUS_SIZE
+            && mouse_vy <= cy + line_width * PLUS_SIZE
+        ) {
+            let new_fen = `[${
+                (board_state.width + "/").repeat(board_state.height).slice(0, -1)
+            }:${
+                mouse_l
+            }:${
+                Math.floor(mouse_t / 2) + 1
+            }:${
+                mouse_t % 2 === 0 ? "w" : "b"
+            }]`;
+            let fen = fen_input.value.split("\n");
+            let index = fen.findIndex(x => !x.startsWith("["));
+            if (index == -1) fen.push(new_fen);
+            else fen.splice(index, 0, new_fen);
+            fen_input.value = fen.join("\n");
+        }
+    }
+
+
+    update_input();
 }
 
 canvas.onmouseleave = () => {

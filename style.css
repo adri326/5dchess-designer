@@ -180,6 +180,8 @@ body {
 #status {
     padding: 4px;
     flex-grow: 1;
+    overflow-x: auto;
+    white-space: nowrap;
 }
 
 #status.ok {
