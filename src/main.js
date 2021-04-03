@@ -11,6 +11,7 @@ const height_input = document.getElementById("height");
 const empty_button = document.getElementById("empty");
 const std_button = document.getElementById("standard");
 const t0_button = document.getElementById("standard-t0");
+const space_around_button = document.getElementById("space-around");
 const dpr = window.devicePixelRatio || 1;
 
 const MARGIN = 48 * dpr;
@@ -22,6 +23,7 @@ const AXIS_HOVER_FILL = "#80808060";
 const FONT_SIZE = 16 * dpr;
 const AXES_MARGIN = 8 * dpr;
 
+let space_around = false;
 let selected_piece = PIECES.BLANK;
 let piece_buttons = [];
 let piece_images = [];
@@ -136,8 +138,8 @@ function render() {
 
     let board_size = Math.max(
         Math.min(
-            (canvas.width - MARGIN * 2) / (max_t - min_t + 1),
-            (canvas.height - MARGIN * 2) / (max_l - min_l + 1)
+            (canvas.width - MARGIN * 2) / (max_t - min_t + 1 + 2 * space_around),
+            (canvas.height - MARGIN * 2) / (max_l - min_l + 1 + 2 * space_around)
         ),
         MIN_BOARD_SIZE
     );
@@ -184,23 +186,25 @@ function render() {
             }
         }
 
-        for (let y = 0; y < board_state.height; y++) {
-            for (let x = 0; x < board_state.width; x++) {
-                let piece = board[y][x];
-                if (piece) {
-                    ctx.beginPath();
-                    ctx.rect(
-                        vx + x * tile_size + 2,
-                        vy + y * tile_size + 2,
-                        tile_size - 4,
-                        tile_size - 4
-                    );
-                    ctx.strokeStyle = piece.moved ? "#000000" : "#ffffff";
-                    if (canvas.width < 600) {
-                        ctx.strokeStyle = piece.moved ? "#00000080" : "#ffffff80";
+        if (!space_around) {
+            for (let y = 0; y < board_state.height; y++) {
+                for (let x = 0; x < board_state.width; x++) {
+                    let piece = board[y][x];
+                    if (piece) {
+                        ctx.beginPath();
+                        ctx.rect(
+                            vx + x * tile_size + 2,
+                            vy + y * tile_size + 2,
+                            tile_size - 4,
+                            tile_size - 4
+                        );
+                        ctx.strokeStyle = piece.moved ? "#000000" : "#ffffff";
+                        if (canvas.width < 600) {
+                            ctx.strokeStyle = piece.moved ? "#00000080" : "#ffffff80";
+                        }
+                        ctx.lineWidth = 2;
+                        if (PIECES_MOVED_NEEDED[piece.id]) ctx.stroke();
                     }
-                    ctx.lineWidth = 2;
-                    if (PIECES_MOVED_NEEDED[piece.id]) ctx.stroke();
                 }
             }
         }
@@ -270,7 +274,7 @@ function update_axes() {
 
     axes_ctx.fillStyle = "#000000";
     axes_ctx.font = FONT_SIZE + "px monospace";
-    for (let l = position_data.min_l; l <= position_data.max_l; l++) {
+    for (let l = position_data.min_l - space_around; l <= position_data.max_l + space_around; l++) {
         axes_ctx.fillText(
             `L${l > 0 ? '+' + l : l}`,
             AXES_MARGIN,
@@ -278,7 +282,7 @@ function update_axes() {
         );
     }
 
-    for (let t = position_data.min_t - 1; t <= position_data.max_t + 1; t++) {
+    for (let t = position_data.min_t - 1 - space_around; t <= position_data.max_t + 1 + space_around; t++) {
         axes_ctx.save();
         axes_ctx.translate(
             position_data.sx + position_data.board_size * (t - position_data.min_t + .5) - FONT_SIZE / 2,
@@ -352,6 +356,18 @@ t0_button.onclick = () => {
 `;
     update_input();
 };
+space_around_button.onclick = () => {
+    space_around = !space_around;
+    if (space_around) {
+        space_around_button.className = "selected";
+    } else {
+        space_around_button.className = "";
+    }
+    render();
+    update_axes();
+    return true;
+};
+
 // Set scrollbar width in CSS
 document.documentElement.style.setProperty('--scrollbar-width', (window.innerWidth - document.documentElement.clientWidth) + "px");
 

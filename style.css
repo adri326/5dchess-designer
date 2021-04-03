@@ -166,14 +166,20 @@ body {
     left: 0;
 }
 
-#status {
+.bar {
     flex-grow: 0;
     background: #202a20;
     height: var(--status-height);
-    padding: 4px;
-    font-family: monospace;
     box-sizing: border-box;
-    margin: 0;
+    display: flex;
+    flex-direction: row;
+    font-family: monospace;
+    color: white;
+}
+
+#status {
+    padding: 4px;
+    flex-grow: 1;
 }
 
 #status.ok {
@@ -182,6 +188,30 @@ body {
 
 #status.err {
     color: #ffa0a0;
+}
+
+#space-around {
+    cursor: pointer;
+    border: 1px solid transparent;
+    box-sizing: border-box;
+    transition: 0.2s border-color, 0.2s background-color;
+    width: 6em;
+    text-align: center;
+    height: inherit;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+#space-around > button {
+    all: unset;
+}
+
+#space-around:hover {
+    border: 1px solid white;
+}
+
+#space-around.selected {
+    background: #101010;
 }
 
 @media (max-width: 720px) {
