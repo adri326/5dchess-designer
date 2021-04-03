@@ -63,6 +63,7 @@ const PIECE_ASSETS = {
 
 // Piece names
 const PIECE_NAMES = {
+    [PIECES.BLANK]: "Blank",
     [PIECES.W_PAWN]: "White pawn",
     [PIECES.W_KNIGHT]: "White knight",
     [PIECES.W_BISHOP]: "White bishop",
@@ -145,3 +146,5 @@ const PIECES_MOVED_NEEDED = {
     [PIECES.B_CKING]: false,
     [PIECES.B_RQUEEN]: false,
 };
+
+const ALPHABET = "abcdefghijklmnopqrstuvw";

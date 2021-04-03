@@ -6,7 +6,7 @@ const status = document.getElementById("status");
 const axes = document.getElementById("axes");
 const axes_ctx = axes.getContext("2d");
 
-const MARGIN = 16;
+const MARGIN = 48;
 const BOARD_MARGIN = 16;
 const BORDER_WIDTH = 4;
 const FILL_LIGHT = "#909090";
@@ -118,8 +118,8 @@ function render() {
 
     let board_size = Math.max(
         Math.min(
-            (canvas.width - MARGIN) / 2 / (max_l - min_l + 1),
-            (canvas.height - MARGIN) / 2 / (max_t - min_t + 1)
+            (canvas.width - MARGIN * 2) / (max_t - min_t + 1),
+            (canvas.height - MARGIN * 2) / (max_l - min_l + 1)
         ),
         MIN_BOARD_SIZE
     );
@@ -245,7 +245,7 @@ function update_axes() {
             AXES_MARGIN,
         );
         axes_ctx.rotate(Math.PI / 2);
-        axes_ctx.fillText(`T${(t >= -1 ? '+' : '') + Math.floor((t + 2) / 2) + (t % 2 === 0 ? 'w' : 'b')}`, 0, 0);
+        axes_ctx.fillText(`T${(t > -1 ? '+' : '') + Math.floor((t + 2) / 2) + (t % 2 === 0 ? 'w' : 'b')}`, 0, 0);
         axes_ctx.restore();
     }
 }
@@ -328,6 +328,9 @@ function drag_piece() {
         ) {
             let board = board_state[region[4] + ":" + region[5]];
             board[region[7]][region[6]] = selected_piece ? new Piece(selected_piece, false) : null;
+            let t = Math.floor(region[5] / 2) + 1 + (region[5] % 2 === 0 ? "w" : "b");
+            status.innerText = `Placed '${PIECE_NAMES[selected_piece]}' at (L${(region[4] > 0 ? "+" : "") + region[4]}:T${region[5] >= 0 ? "+" + t : t}:${ALPHABET[region[6]]}:${board_state.height - region[7]})`;
+            status.className = "ok";
             render();
             update_fen();
             return
