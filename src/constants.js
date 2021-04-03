@@ -34,6 +34,7 @@ const PIECES = {
 
 // Piece assets
 const PIECE_ASSETS = {
+    [PIECES.BLANK]: "cross.svg",
     [PIECES.W_PAWN]: "assets/pawn-white.svg",
     [PIECES.W_KNIGHT]: "assets/knight-white.svg",
     [PIECES.W_BISHOP]: "assets/bishop-white.svg",
@@ -123,7 +124,7 @@ const PIECES_MOVED_NEEDED = {
     [PIECES.W_PAWN]: true,
     [PIECES.W_KNIGHT]: false,
     [PIECES.W_BISHOP]: false,
-    [PIECES.W_ROOK]: false,
+    [PIECES.W_ROOK]: true,
     [PIECES.W_QUEEN]: false,
     [PIECES.W_KING]: true,
     [PIECES.W_UNICORN]: false,
@@ -136,7 +137,7 @@ const PIECES_MOVED_NEEDED = {
     [PIECES.B_PAWN]: true,
     [PIECES.B_KNIGHT]: false,
     [PIECES.B_BISHOP]: false,
-    [PIECES.B_ROOK]: false,
+    [PIECES.B_ROOK]: true,
     [PIECES.B_QUEEN]: false,
     [PIECES.B_KING]: true,
     [PIECES.B_UNICORN]: false,

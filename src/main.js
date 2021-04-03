@@ -5,6 +5,12 @@ const fen_input = document.getElementById("fen");
 const status = document.getElementById("status");
 const axes = document.getElementById("axes");
 const axes_ctx = axes.getContext("2d");
+const moved_button = document.getElementById("moved");
+const width_input = document.getElementById("width");
+const height_input = document.getElementById("height");
+const empty_button = document.getElementById("empty");
+const std_button = document.getElementById("standard");
+const t0_button = document.getElementById("standard-t0");
 
 const MARGIN = 48;
 const BOARD_MARGIN = 16;
@@ -23,6 +29,7 @@ let board_state = {};
 let previous_value = "";
 let clickable_regions = [];
 let position_data = null;
+let moved = false;
 
 let mouse_down = false;
 let mouse_vx = null;
@@ -46,35 +53,45 @@ function update_fen() {
 
     base_fen = base_fen.replace(/\[([^\]]+)\]/g, (full, inner) => {
         let match = /^([a-zA-Z0-9*+/]+):([+-]?\d+):(\d+):([wb])$/.exec(inner);
-        if (!match) {
-            return full;
-        }
-        let coords = +match[2] + ":" + ((+match[3] - 1) * 2 + (match[4] === "w" ? 0 : 1));
-        let board = board_state[coords];
-        let fen = "";
-        for (let row of board) {
-            let count_empty = 0;
+        if (match) {
+            let coords = +match[2] + ":" + ((+match[3] - 1) * 2 + (match[4] === "w" ? 0 : 1));
+            let board = board_state[coords];
+            let fen = "";
+            for (let row of board) {
+                let count_empty = 0;
 
-            for (let piece of row) {
-                if (piece) {
-                    if (count_empty > 0) {
-                        fen += +count_empty;
-                        count_empty = 0;
+                for (let piece of row) {
+                    if (piece) {
+                        if (count_empty > 0) {
+                            fen += +count_empty;
+                            count_empty = 0;
+                        }
+                        fen += PIECES_FEN[piece.id];
+                        if (PIECES_MOVED_NEEDED[piece.id] && !piece.moved) {
+                            fen += "*";
+                        }
+                    } else {
+                        count_empty++;
                     }
-                    fen += PIECES_FEN[piece.id];
-                    if (PIECES_MOVED_NEEDED[piece.id] && !piece.moved) {
-                        fen += "*";
-                    }
-                } else {
-                    count_empty++;
                 }
-            }
 
-            if (count_empty > 0) fen += +count_empty;
-            fen += "/";
+                if (count_empty > 0) fen += +count_empty;
+                fen += "/";
+            }
+            fen = fen.slice(0, -1);
+            return `[${fen}:${match[2]}:${match[3]}:${match[4]}]`;
         }
-        fen = fen.slice(0, -1);
-        return `[${fen}:${match[2]}:${match[3]}:${match[4]}]`;
+
+        match = /^\s*(\w+)\s+"([^\"]+)"\s*$/.exec(inner);
+        if (match) {
+            if (match[1].toLowerCase() === "size") {
+                return `[Size "${board_state.width}x${board_state.height}"]`
+            } else {
+                return full;
+            }
+        }
+
+        return full;
     });
 
     if (fen_input.value !== base_fen) {
@@ -165,6 +182,25 @@ function render() {
                 }
             }
         }
+
+        for (let y = 0; y < board_state.height; y++) {
+            for (let x = 0; x < board_state.width; x++) {
+                let piece = board[y][x];
+                if (piece) {
+                    ctx.beginPath();
+                    ctx.rect(
+                        vx + x * tile_size + 2,
+                        vy + y * tile_size + 2,
+                        tile_size - 4,
+                        tile_size - 4
+                    );
+                    ctx.strokeStyle = piece.moved ? "#000000" : "#ffffff";
+                    ctx.lineWidth = 2;
+                    if (PIECES_MOVED_NEEDED[piece.id]) ctx.stroke();
+                }
+            }
+        }
+
         ctx.beginPath();
         ctx.rect(
             vx - BORDER_WIDTH / 2,
@@ -264,6 +300,7 @@ for (let piece in PIECE_ASSETS) {
     };
     elem.id = piece;
     elem.title = PIECE_NAMES[piece];
+    if (piece == selected_piece) elem.className = "selected";
     let svg = document.createElement("img");
     svg.src = PIECE_ASSETS[piece];
     piece_promises.push(new Promise((resolve, reject) => {
@@ -276,6 +313,39 @@ for (let piece in PIECE_ASSETS) {
     piece_buttons[piece] = elem;
 }
 fen_input.onchange = fen_input.onkeyup = () => {
+    update_input();
+};
+moved_button.onclick = () => {
+    moved = !moved;
+    if (moved) {
+        moved_button.className = "two toggle selected";
+    } else {
+        moved_button.className = "two toggle";
+    }
+};
+empty_button.onclick = () => {
+    fen_input.value = `[Size "${+width_input.value}x${+height_input.value}"]
+[Board "custom"]
+[Mode "5D"]
+[${(+width_input.value + "/").repeat(+height_input.value).slice(0, -1)}:0:1:w]
+`;
+    update_input();
+};
+std_button.onclick = () => {
+    width_input.value = "8";
+    height_input.value = "8";
+    fen_input.value = `[Size "8x8"]\n[Board "custom"]\n[Mode "5D"]
+[r*nbqk*bnr*/p*p*p*p*p*p*p*p*/8/8/8/8/P*P*P*P*P*P*P*P*/R*NBQK*BNR*:0:1:w]
+`;
+    update_input();
+};
+t0_button.onclick = () => {
+    width_input.value = "8";
+    height_input.value = "8";
+    fen_input.value = `[Size "8x8"]\n[Board "custom"]\n[Mode "5D"]
+[r*nbqk*bnr*/p*p*p*p*p*p*p*p*/8/8/8/8/P*P*P*P*P*P*P*P*/R*NBQK*BNR*:0:0:b]
+[r*nbqk*bnr*/p*p*p*p*p*p*p*p*/8/8/8/8/P*P*P*P*P*P*P*P*/R*NBQK*BNR*:0:1:w]
+`;
     update_input();
 };
 
@@ -327,12 +397,15 @@ function drag_piece() {
             && mouse_vy >= region[1] && mouse_vy - region[1] <= region[3]
         ) {
             let board = board_state[region[4] + ":" + region[5]];
-            board[region[7]][region[6]] = selected_piece ? new Piece(selected_piece, false) : null;
+            board[region[7]][region[6]] = selected_piece ? new Piece(selected_piece, moved) : null;
+
             let t = Math.floor(region[5] / 2) + 1 + (region[5] % 2 === 0 ? "w" : "b");
             status.innerText = `Placed '${PIECE_NAMES[selected_piece]}' at (L${(region[4] > 0 ? "+" : "") + region[4]}:T${region[5] >= 0 ? "+" + t : t}:${ALPHABET[region[6]]}:${board_state.height - region[7]})`;
             status.className = "ok";
+
             render();
             update_fen();
+
             return
         }
     }

@@ -50,6 +50,11 @@ body {
 }
 
 #pieces > li {
+    background: #909090;
+    color: black;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     width: calc(var(--controls-width) / var(--piece-per-row));
     height: calc(var(--controls-width) / var(--piece-per-row));
 }
@@ -77,6 +82,61 @@ body {
 #pieces > li > img:active {
     cursor: pointer;
     border: 1px solid white;
+}
+
+#pieces > li.two {
+    width: calc(2 * var(--controls-width) / var(--piece-per-row));
+}
+
+#pieces > li.three {
+    width: calc(3 * var(--controls-width) / var(--piece-per-row));
+}
+
+#pieces > li > span {
+    font-family: monospace;
+    font-size: 12pt;
+}
+
+#pieces > li > span.noselect {
+    cursor: default;
+    user-select: none;
+}
+
+#pieces > li.toggle {
+    cursor: pointer;
+    user-select: none;
+    border: 1px solid transparent;
+    box-sizing: border-box;
+    transition: 0.2s border-color, 0.2s background-color;
+}
+
+#pieces > li.toggle:hover {
+    border: 1px solid #ffffff;
+}
+
+#pieces > li.toggle:active, #pieces > li.toggle.selected {
+    background: #606060;
+}
+
+#pieces > li > input[type=text] {
+    font-family: monospace;
+    text-align: center;
+    background: #606060;
+    color: white;
+    width: inherit;
+    height: inherit;
+    margin: 0;
+    padding: 4px;
+    outline: none;
+    border: 1px solid #000000;
+    box-sizing: border-box;
+    font-size: calc(0.5 * var(--controls-width) / var(--piece-per-row));
+    transition: 0.2s border-color, 0.2s background-color;
+}
+
+#pieces > li > input[type=text]:hover, #pieces > li > input[type=text]:active {
+    border: 1px solid #ffffff;
+    background: #202a20;
 }
 
 
