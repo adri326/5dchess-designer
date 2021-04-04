@@ -197,7 +197,7 @@ body {
     border: 1px solid transparent;
     box-sizing: border-box;
     transition: 0.2s border-color, 0.2s background-color;
-    width: 6em;
+    width: 7em;
     text-align: center;
     height: inherit;
     display: flex;

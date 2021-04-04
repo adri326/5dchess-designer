@@ -22,7 +22,7 @@ const FILL_DARK = "#606060";
 const AXIS_HOVER_FILL = "#80808060";
 const FONT_SIZE = 16 * dpr;
 const AXES_MARGIN = 8 * dpr;
-const PLUS_SIZE = 5;
+const PLUS_SIZE = 6;
 
 let space_around = false;
 let selected_piece = PIECES.BLANK;
@@ -40,6 +40,8 @@ let mouse_vx = null;
 let mouse_vy = null;
 let mouse_l = null;
 let mouse_t = null;
+let prev_mouse_l = mouse_l;
+let prev_mouse_t = mouse_t;
 
 function update_pieces() {
     for (let button of piece_buttons) {
@@ -246,7 +248,10 @@ function update_input() {
     if (value === previous_value) return;
     previous_value = value;
     board_state = parse(value);
-    update_status();
+    if (board_state instanceof Error) {
+        update_status();
+        console.error(board_state);
+    }
     render();
 }
 
@@ -277,7 +282,7 @@ function update_axes() {
 
         if (space_around && board_state && !board_state[mouse_l + ":" + mouse_t]) {
             axes_ctx.beginPath();
-            let line_width = position_data.board_size * .025;
+            let line_width = position_data.board_size * .035;
             axes_ctx.moveTo(
                 cx - line_width,
                 cy - line_width
@@ -302,7 +307,8 @@ function update_axes() {
                 );
             });
             if (
-                mouse_vx >= cx - line_width * PLUS_SIZE
+                window.matchMedia("(hover: none)").matches
+                || mouse_vx >= cx - line_width * PLUS_SIZE
                 && mouse_vx <= cx + line_width * PLUS_SIZE
                 && mouse_vy >= cy - line_width * PLUS_SIZE
                 && mouse_vy <= cy + line_width * PLUS_SIZE
@@ -430,6 +436,8 @@ window.onresize = () => {
 canvas.onmousemove = (evt) => {
     mouse_vx = evt.layerX * dpr;
     mouse_vy = evt.layerY * dpr;
+    prev_mouse_l = mouse_l;
+    prev_mouse_t = mouse_t;
     update_axes();
     if (mouse_down) {
         drag_piece();
@@ -451,8 +459,11 @@ canvas.onmouseup = (evt) => {
     update_axes();
 
     // TODO: do this on the second tap on mobile!
-    if (space_around && board_state && !board_state[mouse_l + ":" + mouse_t]) {
-        let line_width = position_data.board_size * .025;
+    if (
+        (!window.matchMedia("(hover: none)").matches || prev_mouse_l === mouse_l && prev_mouse_t === mouse_t)
+        && space_around && board_state && !board_state[mouse_l + ":" + mouse_t]
+    ) {
+        let line_width = position_data.board_size * .035;
         let sx = position_data.sx + (mouse_t - position_data.min_t) * position_data.board_size;
         let sy = position_data.sy + (mouse_l - position_data.min_l) * position_data.board_size;
         let cx = sx + position_data.board_size / 2;
@@ -477,6 +488,8 @@ canvas.onmouseup = (evt) => {
             if (index == -1) fen.push(new_fen);
             else fen.splice(index, 0, new_fen);
             fen_input.value = fen.join("\n");
+            let t = Math.floor(mouse_t / 2) + 1;
+            status.innerText = `Added board at (L${mouse_l > 0 ? "+" + mouse_l : mouse_l}:T${t > 0 ? "+" + t : t}${mouse_t % 2 === 0 ? "w" : "b"})`;
         }
     }
 
@@ -489,6 +502,7 @@ canvas.onmouseleave = () => {
 }
 
 function drag_piece() {
+    if (space_around) return;
     for (let region of clickable_regions) {
         if (
             mouse_vx >= region[0] && mouse_vx - region[0] <= region[2]
