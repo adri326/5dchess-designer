@@ -1,7 +1,7 @@
-The files in this directory are all (re-)distributed under the BSD 3-Clause license.
+The files in this directory are all (re-)distributed under the BSD 3-Clause license (BSD-3).
 You will find a copy of this license at the end of this document
 
-The following files are pieces by ⓒ Colin M.L. Burnett:
+The following files are pieces by © Colin M.L. Burnett, distributed under the BSD-3 licence:
 
 - `pawn-white.svg`: https://commons.wikimedia.org/wiki/File:Chess_plt45.svg
 - `pawn-black.svg`: https://commons.wikimedia.org/wiki/File:Chess_pdt45.svg
@@ -17,15 +17,13 @@ The following files are pieces by ⓒ Colin M.L. Burnett:
 - `knight-black.svg`: https://commons.wikimedia.org/wiki/File:Chess_kdt45.svg
 - `dragon-white.svg`: https://commons.wikimedia.org/wiki/File:Chess_Dlt45.svg
 - `dragon-black.svg`: https://commons.wikimedia.org/wiki/File:Chess_Ddt45.svg
-- `princess-white.svg`: https://commons.wikimedia.org/wiki/File:Chess_Blt45.svg
-- `princess-black.svg`: https://commons.wikimedia.org/wiki/File:Chess_Bdt45.svg
 
-The following files are pieces by Colin M.L. Burnett, modified and redistributed by ⓒ Francois-Pier:
+The following files are pieces by Colin M.L. Burnett, modified and redistributed under BSD-3 by © Francois-Pier:
 
 - `unicorn-white.svg`: https://commons.wikimedia.org/wiki/File:Chess_Ult45.svg
 - `unicorn-black.svg`: https://commons.wikimedia.org/wiki/File:Chess_Udt45.svg
 
-The following files are pieces by Colin M.L. Burnett, modified and redistributed by Wikimedia User "NikNaks93":
+The following files are pieces by Colin M.L. Burnett, modified and redistributed under BSD-3 by Wikimedia User "NikNaks93":
 
 - `brawn-white.svg`: https://commons.wikimedia.org/wiki/File:Chess_hlt45.svg
 - `brawn-black.svg`: https://commons.wikimedia.org/wiki/File:Chess_hdt45.svg
@@ -33,6 +31,11 @@ The following files are pieces by Colin M.L. Burnett, modified and redistributed
 - `commonking-black.svg`: https://commons.wikimedia.org/wiki/File:Chess_fdt45.svg
 - `royalqueen-white.svg`: https://commons.wikimedia.org/wiki/File:Chess_glt45.svg
 - `royalqueen-black.svg`: https://commons.wikimedia.org/wiki/File:Chess_gdt45.svg
+
+The following files are pieces by Colin M.L Burnett, modified and redistributed under BSD-3 by Discord user AverageHuman and © Adrien Burgun:
+
+- `princess-white.svg`: based off https://commons.wikimedia.org/wiki/File:Chess_Blt45.svg
+- `princess-black.svg`: based off https://commons.wikimedia.org/wiki/File:Chess_Bdt45.svg
 
 Following is the BSD 3-Clause license, where "The author" refers to the aforementionned copyright holders.
 
