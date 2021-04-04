@@ -243,14 +243,19 @@ function update_status() {
     status.className = "ok";
 }
 
+let was_error = false;
 function update_input() {
     let value = fen_input.value;
     if (value === previous_value) return;
     previous_value = value;
     board_state = parse(value);
     if (board_state instanceof Error) {
+        was_error = true;
         update_status();
         console.error(board_state);
+    } else if (was_error) {
+        was_error = false;
+        update_status();
     }
     render();
 }
