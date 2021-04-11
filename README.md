@@ -2,15 +2,15 @@
 
 This is a simple static webapp to design your own [5D Chess](https://5dchesswithmultiversetimetravel.com/) variants, using [5DFEN and 5DPGN](https://github.com/adri326/5dchess-notation/).
 
-[You can try it out here!](https://adri326.github.io/5dchess-variants)
+[You can try it out here!](https://adri326.github.io/5dchess-designer)
 
 ## Installing and running
 
 Clone this repository and navigate to it:
 
 ```sh
-git clone https://github.com/adri326/5dchess-variants/
-cd 5dchess-variants
+git clone https://github.com/adri326/5dchess-designer/
+cd 5dchess-designer
 ```
 
 You may then open your browser and navigate to this file, or run a static webserver in the root directory:
