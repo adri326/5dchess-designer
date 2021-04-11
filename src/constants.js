@@ -104,7 +104,7 @@ const PIECES_FEN = {
     [PIECES.W_PRINCESS]: "S",
     [PIECES.W_BRAWN]: "W",
     [PIECES.W_CKING]: "C",
-    [PIECES.W_RQUEEN]: "Q+",
+    [PIECES.W_RQUEEN]: "Y",
 
     [PIECES.B_PAWN]: "p",
     [PIECES.B_KNIGHT]: "n",
@@ -117,7 +117,7 @@ const PIECES_FEN = {
     [PIECES.B_PRINCESS]: "s",
     [PIECES.B_BRAWN]: "w",
     [PIECES.B_CKING]: "c",
-    [PIECES.B_RQUEEN]: "q+",
+    [PIECES.B_RQUEEN]: "y",
 };
 
 const PIECES_MOVED_NEEDED = {

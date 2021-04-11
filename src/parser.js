@@ -103,16 +103,16 @@ function parse(raw) {
                         row.push(new Piece(PIECES.W_CKING + white * PIECES.B_OFFSET, true));
                         break;
 
+                    case 'y':
+                    case 'Y':
+                        row.push(new Piece(PIECES.W_RQUEEN + white * PIECES.B_OFFSET, true));
+                        break;
+
                     case 'q':
                     case 'Q':
-                        if (raw[1] === "+") {
-                            row.push(new Piece(PIECES.W_RQUEEN + white * PIECES.B_OFFSET, true));
-                            raw = raw.slice(1);
-                        } else {
-                            row.push(new Piece(PIECES.W_QUEEN + white * PIECES.B_OFFSET, true));
-                        }
-
+                        row.push(new Piece(PIECES.W_QUEEN + white * PIECES.B_OFFSET, true));
                         break;
+
                     case '+':
                         return new Error(`Invalid 5DFEN: unexpected '+': '${raw}`);
                     case '*':
