@@ -34,7 +34,6 @@ const PIECES = {
 
 // Piece assets
 const PIECE_ASSETS = {
-    [PIECES.BLANK]: "cross.svg",
     [PIECES.W_PAWN]: "assets/pawn-white.svg",
     [PIECES.W_KNIGHT]: "assets/knight-white.svg",
     [PIECES.W_BISHOP]: "assets/bishop-white.svg",
