@@ -15,12 +15,13 @@ body {
 .controls {
     display: flex;
     flex-direction: column;
-    height: 100vh;
+    min-height: 100vh;
     width: var(--controls-width);
     flex-shrink: 0;
     background: #202a20;
     color: white;
     box-shadow: -12px 0px 12px 12px rgba(0, 0, 0, 0.4);
+    overflow: hidden;
 }
 
 #fen {
@@ -35,6 +36,8 @@ body {
     line-break: anywhere;
     flex-shrink: 1;
     flex-grow: 1;
+    min-height: 12em;
+    box-shadow: 0px -8px 12px 12px rgba(0, 0, 0, 0.25);
 }
 
 #fen:focus {
@@ -57,6 +60,8 @@ body {
     align-items: center;
     margin-top: 0.5em;
     margin-bottom: 0.5em;
+    border-radius: 2px;
+    box-shadow: 0px 2px 8px -3px rgba(0, 0, 0, 0.2);
 }
 
 section > .input-container {
@@ -131,14 +136,19 @@ section > .input-container {
 }
 
 #pieces-white, #pieces-black {
-    width: calc(var(--controls-width) / 2);
+    height: calc(var(--pieces-height) / var(--rows));
     display: flex;
     flex-direction: row;
-    flex-wrap: wrap;
+    flex-wrap: nowrap;
     list-style: none;
     align-items: flex-start;
     padding: 0;
     margin: 0;
+}
+
+#black-phantom {
+    visibility: hidden;
+    position: absolute;
 }
 
 #pieces li {
@@ -147,13 +157,13 @@ section > .input-container {
     display: flex;
     align-items: center;
     justify-content: center;
-    width: calc(var(--controls-width) / var(--piece-per-row));
-    height: calc(var(--controls-width) / var(--piece-per-row));
+    width: calc(var(--pieces-height) / var(--rows));
+    height: calc(var(--pieces-height) / var(--rows));
 }
 
 #pieces li > img {
-    width: calc(var(--controls-width) / var(--piece-per-row));
-    height: calc(var(--controls-width) / var(--piece-per-row));
+    width: calc(var(--pieces-height) / var(--rows));
+    height: calc(var(--pieces-height) / var(--rows));
     background: #909090;
     border: 1px solid transparent;
     box-sizing: border-box;
@@ -174,14 +184,6 @@ section > .input-container {
 #pieces li > img:active {
     cursor: pointer;
     border: 1px solid white;
-}
-
-#pieces li.two {
-    width: calc(2 * var(--controls-width) / var(--piece-per-row));
-}
-
-#pieces li.three {
-    width: calc(3 * var(--controls-width) / var(--piece-per-row));
 }
 
 #pieces li > span {
@@ -231,11 +233,13 @@ section > .input-container {
     background: #202a20;
 }
 
-
 .render {
     flex-grow: 1;
     height: 100vh;
     --status-height: 28px;
+    --n-pieces: 25;
+    --pieces-height: calc((100vw - var(--controls-width)) / var(--n-pieces) * var(--rows));
+    --rows: 1;
     position: relative;
     display: flex;
     flex-direction: column;
@@ -243,7 +247,7 @@ section > .input-container {
 
 #axes {
     width: 100%;
-    height: calc(100vh - var(--status-height));
+    height: calc(100vh - var(--status-height) - var(--pieces-height));
     flex-grow: 1;
     margin: 0;
     box-sizing: border-box;
@@ -252,7 +256,7 @@ section > .input-container {
 
 #canvas {
     width: 100%;
-    height: calc(100vh - var(--status-height));
+    height: calc(100vh - var(--status-height) - var(--pieces-height));
     position: absolute;
     top: 0;
     left: 0;
@@ -321,20 +325,23 @@ section > .input-container {
     }
 
     .render {
-        height: calc(100vh - var(--rows) * var(--controls-width) / var(--piece-per-row));
+        --pieces-height: calc(100vw / var(--n-pieces) * var(--rows));
+        height: calc(100vh);
     }
 
     #canvas, #axes {
-        height: calc(100vh - var(--status-height) - var(--rows) * var(--controls-width) / var(--piece-per-row));
+        height: calc(100vh - var(--status-height) - var(--pieces-height));
     }
 
     .controls {
         width: 100vw;
         flex-direction: column-reverse;
+        box-shadow: none;
     }
 
     #fen {
         font-size: 12pt;
+        box-shadow: 0px 8px 12px 12px rgba(0, 0, 0, 0.25);
     }
 
     #settings section:not(.mobile-first) {
@@ -362,5 +369,23 @@ section > .input-container {
     body {
         --piece-per-row: 12;
         --rows: 4;
+    }
+}
+
+@media (max-width: 1300px) {
+    .render {
+        --n-pieces: 13;
+        --rows: 2;
+    }
+
+    #pieces {
+        flex-direction: column;
+    }
+
+    #black-phantom {
+        visibility: visible;
+        position: relative;
+        display: block;
+        flex-shrink: 0;
     }
 }
