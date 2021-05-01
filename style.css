@@ -8,7 +8,6 @@ body {
     overflow-x: hidden;
     overflow-y: hidden;
     --controls-width: 24em;
-    --piece-per-row: 8;
     --color-highlight: #78b0ff;
 }
 
@@ -135,11 +134,20 @@ section > .input-container {
     flex-direction: row;
 }
 
-#pieces-white, #pieces-black {
-    height: calc(var(--pieces-height) / var(--rows));
+.mobile-vertical {
     display: flex;
     flex-direction: row;
-    flex-wrap: nowrap;
+}
+
+#pieces-none-container {
+    background: #909090;
+}
+
+#pieces-white, #pieces-black, #pieces-none {
+    height: calc(var(--pieces-height));
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
     list-style: none;
     align-items: flex-start;
     padding: 0;
@@ -186,59 +194,12 @@ section > .input-container {
     border: 1px solid white;
 }
 
-#pieces li > span {
-    font-family: monospace;
-    font-size: 12pt;
-}
-
-#pieces li > span.noselect {
-    cursor: default;
-    user-select: none;
-}
-
-#pieces li.toggle {
-    cursor: pointer;
-    user-select: none;
-    border: 1px solid transparent;
-    box-sizing: border-box;
-    transition: 0.2s border-color, 0.2s background-color;
-}
-
-#pieces li.toggle:hover {
-    border: 1px solid #ffffff;
-}
-
-#pieces li.toggle:active, #pieces li.toggle.selected {
-    background: #606060;
-}
-
-#pieces li > input[type=text] {
-    font-family: monospace;
-    text-align: center;
-    background: #606060;
-    color: white;
-    width: inherit;
-    height: inherit;
-    margin: 0;
-    padding: 4px;
-    outline: none;
-    border: 1px solid #000000;
-    box-sizing: border-box;
-    font-size: calc(0.5 * var(--controls-width) / var(--piece-per-row));
-    transition: 0.2s border-color, 0.2s background-color;
-}
-
-#pieces li > input[type=text]:hover, #pieces li > input[type=text]:active {
-    border: 1px solid #ffffff;
-    background: #202a20;
-}
-
 .render {
     flex-grow: 1;
     height: 100vh;
     --status-height: 28px;
-    --n-pieces: 25;
-    --pieces-height: calc((100vw - var(--controls-width)) / var(--n-pieces) * var(--rows));
+    --n-pieces: 24;
+    --pieces-height: calc((100vw - var(--controls-width)) / (var(--n-pieces) + 1) * var(--rows));
     --rows: 1;
     position: relative;
     display: flex;
@@ -288,29 +249,30 @@ section > .input-container {
     color: #ffa0a0;
 }
 
-/* #space-around {
-    cursor: pointer;
-    border: 1px solid transparent;
-    box-sizing: border-box;
-    transition: 0.2s border-color, 0.2s background-color;
-    width: 7em;
-    text-align: center;
-    height: inherit;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-#space-around > button {
-    all: unset;
-}
+@media (max-width: 1300px) {
+    .render {
+        --n-pieces: 12;
+        --rows: 2;
+    }
 
-#space-around:hover {
-    border: 1px solid white;
-}
+    .mobile-vertical {
+        flex-direction: column;
+    }
 
-#space-around.selected {
-    background: #101010;
-} */
+    #pieces-white, #pieces-black, #pieces-none {
+        height: calc(var(--pieces-height) / 2);
+    }
+    #pieces-white, #pieces-black {
+        width: calc(var(--pieces-height) / var(--rows) * var(--n-pieces));
+    }
+
+    #black-phantom {
+        visibility: visible;
+        position: relative;
+        display: block;
+        flex-shrink: 0;
+    }
+}
 
 @media (max-width: 720px) {
     html {
@@ -321,12 +283,13 @@ section > .input-container {
         flex-direction: column-reverse;
         overflow-y: auto;
         --controls-width: calc(100vw - var(--scrollbar-width, 0px));
-        --rows: 5;
     }
 
     .render {
-        --pieces-height: calc(100vw / var(--n-pieces) * var(--rows));
+        --pieces-height: calc(100vw / (var(--n-pieces) + 1) * var(--rows));
         height: calc(100vh);
+        --n-pieces: 6;
+        --rows: 4;
     }
 
     #canvas, #axes {
@@ -367,25 +330,6 @@ section > .input-container {
 
 @media (max-width: 720px) and (min-aspect-ratio: 0.8) {
     body {
-        --piece-per-row: 12;
         --rows: 4;
-    }
-}
-
-@media (max-width: 1300px) {
-    .render {
-        --n-pieces: 13;
-        --rows: 2;
-    }
-
-    #pieces {
-        flex-direction: column;
-    }
-
-    #black-phantom {
-        visibility: visible;
-        position: relative;
-        display: block;
-        flex-shrink: 0;
     }
 }

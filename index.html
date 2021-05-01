@@ -57,8 +57,13 @@
       </canvas>
       <canvas id="axes"></canvas>
       <div id="pieces">
-        <ul id="pieces-white"></ul>
-        <ul id="pieces-black"><li id="black-phantom"></li></ul>
+        <div id="pieces-none-container">
+          <ul id="pieces-none"><li id="0" class="selected" title="No piece" onclick="selected_piece = 0; update_pieces();"><img src="cross.svg" /></li></ul>
+        </div>
+        <div class="mobile-vertical">
+          <ul id="pieces-white"></ul>
+          <ul id="pieces-black"></ul>
+        </div>
       </div>
       <div class="bar">
         <div id="status" class="ok">Loading...</div>

@@ -45,7 +45,7 @@ const COORDS_REGEX = /^-?\d+:-?\d+/;
 
 let space_around = false;
 let selected_piece = PIECES.BLANK;
-let piece_buttons = [];
+let piece_buttons = [document.getElementById("0")];
 let piece_images = [];
 let assets_ready = false;
 let board_state = {};
@@ -65,7 +65,7 @@ let prev_mouse_t = mouse_t;
 function update_pieces() {
     for (let button of piece_buttons) {
         if (!button) continue;
-        if (selected_piece == button.id || selected_piece == 0 && button.id == PIECES.B_OFFSET) {
+        if (selected_piece == button.id) {
             button.className = "selected";
         } else {
             button.className = "";
