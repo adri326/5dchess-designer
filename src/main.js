@@ -3,26 +3,31 @@ const ctx = canvas.getContext("2d");
 const axes = document.getElementById("axes");
 const axes_ctx = axes.getContext("2d");
 
+// Button list for selecting both white's and black's pieces
 const pieces_white = document.getElementById("pieces-white");
 const pieces_black = document.getElementById("pieces-black");
 
+// FEN input box
 const fen_input = document.getElementById("fen");
 
-const moved_button = document.getElementById("moved");
-const not_moved_button = document.getElementById("not-moved");
-
-const width_input = document.getElementById("width");
-const height_input = document.getElementById("height");
-
-const empty_button = document.getElementById("empty");
-const preset_dropdown = document.getElementById("presets");
-const preset_button = document.getElementById("set-preset");
-const std_button = document.getElementById("standard");
-const t0_button = document.getElementById("standard-t0");
-
+// "Current mode" buttons
 const space_around_button = document.getElementById("space-around");
 const edit_pieces_button = document.getElementById("edit-pieces");
 
+// "Add next piece as: [Not yet moved] / [Already moved]"
+const moved_button = document.getElementById("moved");
+const not_moved_button = document.getElementById("not-moved");
+
+// Input fields for the dimensions of the board and button to set the dimensions
+const width_input = document.getElementById("width");
+const height_input = document.getElementById("height");
+const empty_button = document.getElementById("empty");
+
+// Dropdown and button for the presets
+const preset_dropdown = document.getElementById("presets");
+const preset_button = document.getElementById("set-preset");
+
+// Status box
 const status = document.getElementById("status");
 
 const DPR = window.devicePixelRatio || 1;
@@ -62,6 +67,7 @@ let mouse_t = null;
 let prev_mouse_l = mouse_l;
 let prev_mouse_t = mouse_t;
 
+/// Updates the "selected" class for the piece selection buttons
 function update_pieces() {
     for (let button of piece_buttons) {
         if (!button) continue;
@@ -73,6 +79,7 @@ function update_pieces() {
     }
 }
 
+/// Updates the FEN field based on the `board_state` object.
 function update_fen() {
     let base_fen = fen_input.value;
 
@@ -124,6 +131,7 @@ function update_fen() {
     }
 }
 
+/// Resizes the canvas
 function resize_canvas() {
     canvas.width = canvas.clientWidth * DPR;
     canvas.height = canvas.clientHeight * DPR;
@@ -131,6 +139,7 @@ function resize_canvas() {
     axes.height = canvas.height;
 }
 
+/// Renders `board_state` on the main canvas and calls `render_axes`
 function render() {
     if (!assets_ready) return;
     if (!board_state || board_state instanceof Error) return;
@@ -272,10 +281,11 @@ function render() {
         ctx.strokeStyle = "#202a20";
         ctx.lineWidth = BORDER_WIDTH;
         ctx.stroke();
-        update_axes();
+        render_axes();
     }
 }
 
+/// Updates the status bar
 function update_status() {
     if (board_state instanceof Error) {
         status.innerText = board_state.toString();
@@ -294,6 +304,7 @@ function update_status() {
 }
 
 let was_error = false;
+/// Parses the input field if it has changed
 function update_input() {
     let value = fen_input.value;
     if (value === previous_value) return;
@@ -310,7 +321,8 @@ function update_input() {
     render();
 }
 
-function update_axes() {
+/// Renders the axes and super-physical coordinate labels
+function render_axes() {
     if (!assets_ready) return;
     if (!board_state || board_state instanceof Error) return;
     if (!position_data) return;
@@ -440,30 +452,20 @@ fen_input.onchange = fen_input.onkeyup = () => {
     update_input();
 };
 
+// Button behavior
+
 moved_button.onclick = () => {
     moved = true;
-    if (moved) {
-        moved_button.className = "selected";
-        not_moved_button.className = "";
-        window.document.body.classList.add("moved");
-    } else {
-        moved_button.className = "";
-        not_moved_button.className = "selected";
-        window.document.body.classList.remove("moved");
-    }
+    moved_button.className = "selected";
+    not_moved_button.className = "";
+    window.document.body.classList.add("moved");
 };
 
 not_moved_button.onclick = () => {
     moved = false;
-    if (moved) {
-        moved_button.className = "selected";
-        not_moved_button.className = "";
-        window.document.body.classList.add("moved");
-    } else {
-        moved_button.className = "";
-        not_moved_button.className = "selected";
-        window.document.body.classList.remove("moved");
-    }
+    moved_button.className = "";
+    not_moved_button.className = "selected";
+    window.document.body.classList.remove("moved");
 };
 
 empty_button.onclick = () => {
@@ -474,6 +476,7 @@ empty_button.onclick = () => {
 `;
     update_input();
 };
+
 preset_button.onclick = () => {
     fen_input.value = PRESETS[preset_dropdown.value];
     update_input();
@@ -481,29 +484,19 @@ preset_button.onclick = () => {
 
 space_around_button.onclick = () => {
     space_around = true;
-    if (space_around) {
-        space_around_button.className = "selected";
-        edit_pieces_button.className = "";
-    } else {
-        space_around_button.className = "";
-        edit_pieces_button.className = "selected";
-    }
+    space_around_button.className = "selected";
+    edit_pieces_button.className = "";
     render();
-    update_axes();
+    render_axes();
     return true;
 };
 
 edit_pieces_button.onclick = () => {
     space_around = false;
-    if (space_around) {
-        space_around_button.className = "selected";
-        edit_pieces_button.className = "";
-    } else {
-        space_around_button.className = "";
-        edit_pieces_button.className = "selected";
-    }
+    space_around_button.className = "";
+    edit_pieces_button.className = "selected";
     render();
-    update_axes();
+    render_axes();
     return true;
 };
 
@@ -523,12 +516,14 @@ window.onresize = () => {
     render();
 };
 
+// Canvas interaction
+
 canvas.onmousemove = (evt) => {
     mouse_vx = evt.layerX * DPR;
     mouse_vy = evt.layerY * DPR;
     prev_mouse_l = mouse_l;
     prev_mouse_t = mouse_t;
-    update_axes();
+    render_axes();
     if (mouse_down) {
         drag_piece();
     }
@@ -538,7 +533,7 @@ canvas.onmousedown = (evt) => {
     mouse_down = true;
     mouse_vx = evt.layerX * DPR;
     mouse_vy = evt.layerY * DPR;
-    update_axes();
+    render_axes();
     drag_piece();
 }
 
@@ -546,7 +541,7 @@ canvas.onmouseup = (evt) => {
     mouse_down = false;
     mouse_vx = evt.layerX * DPR;
     mouse_vy = evt.layerY * DPR;
-    update_axes();
+    render_axes();
 
     // TODO: do this on the second tap on mobile!
     if (
