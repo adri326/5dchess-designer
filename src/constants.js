@@ -1,6 +1,8 @@
 // Piece IDs
 const PIECES = {
     BLANK: 0,
+    W_BLANK: 0,
+    B_BLANK: 32,
     W_PAWN: 1,
     W_KNIGHT: 2,
     W_BISHOP: 3,
@@ -34,7 +36,7 @@ const PIECES = {
 
 // Piece assets
 const PIECE_ASSETS = {
-    [PIECES.BLANK]: "cross.svg",
+    [PIECES.W_BLANK]: "cross.svg",
     [PIECES.W_PAWN]: "assets/pawn-white.svg",
     [PIECES.W_KNIGHT]: "assets/knight-white.svg",
     [PIECES.W_BISHOP]: "assets/bishop-white.svg",
@@ -48,6 +50,7 @@ const PIECE_ASSETS = {
     [PIECES.W_CKING]: "assets/commonking-white.svg",
     [PIECES.W_RQUEEN]: "assets/royalqueen-white.svg",
 
+    [PIECES.B_BLANK]: "cross.svg",
     [PIECES.B_PAWN]: "assets/pawn-black.svg",
     [PIECES.B_KNIGHT]: "assets/knight-black.svg",
     [PIECES.B_BISHOP]: "assets/bishop-black.svg",

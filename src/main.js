@@ -1,32 +1,47 @@
 const canvas = document.getElementById("canvas");
 const ctx = canvas.getContext("2d");
-const pieces = document.getElementById("pieces");
-const fen_input = document.getElementById("fen");
-const status = document.getElementById("status");
 const axes = document.getElementById("axes");
 const axes_ctx = axes.getContext("2d");
+
+const pieces_white = document.getElementById("pieces-white");
+const pieces_black = document.getElementById("pieces-black");
+
+const fen_input = document.getElementById("fen");
+
 const moved_button = document.getElementById("moved");
+const not_moved_button = document.getElementById("not-moved");
+
 const width_input = document.getElementById("width");
 const height_input = document.getElementById("height");
+
 const empty_button = document.getElementById("empty");
+const preset_dropdown = document.getElementById("presets");
+const preset_button = document.getElementById("set-preset");
 const std_button = document.getElementById("standard");
 const t0_button = document.getElementById("standard-t0");
-const space_around_button = document.getElementById("space-around");
-const dpr = window.devicePixelRatio || 1;
 
-const MARGIN = 48 * dpr;
-const BOARD_MARGIN = 16 * dpr;
-const BORDER_WIDTH = 4 * dpr;
+const space_around_button = document.getElementById("space-around");
+const edit_pieces_button = document.getElementById("edit-pieces");
+
+const status = document.getElementById("status");
+
+const DPR = window.devicePixelRatio || 1;
+const MARGIN = 48 * DPR;
+const BOARD_MARGIN = 16 * DPR;
+const BORDER_WIDTH = 4 * DPR;
+const FONT_SIZE = 16 * DPR;
+const AXES_MARGIN = 8 * DPR;
+const PLUS_SIZE = 6;
+const PIECE_MARGIN = 0.05;
+const LABEL_SIZE = 0.2;
+
 const FILL_LIGHT = "#909090";
 const FILL_DARK = "#606060";
 const LABEL_LIGHT = "#181818";
 const LABEL_DARK = "#e0e0e0";
 const AXIS_HOVER_FILL = "#80808060";
-const FONT_SIZE = 16 * dpr;
-const AXES_MARGIN = 8 * dpr;
-const PLUS_SIZE = 6;
-const PIECE_MARGIN = 0.05;
-const LABEL_SIZE = 0.2;
+
+const COORDS_REGEX = /^-?\d+:-?\d+/;
 
 let space_around = false;
 let selected_piece = PIECES.BLANK;
@@ -50,7 +65,7 @@ let prev_mouse_t = mouse_t;
 function update_pieces() {
     for (let button of piece_buttons) {
         if (!button) continue;
-        if (selected_piece == button.id) {
+        if (selected_piece == button.id || selected_piece == 0 && button.id == PIECES.B_OFFSET) {
             button.className = "selected";
         } else {
             button.className = "";
@@ -110,8 +125,8 @@ function update_fen() {
 }
 
 function resize_canvas() {
-    canvas.width = canvas.clientWidth * dpr;
-    canvas.height = canvas.clientHeight * dpr;
+    canvas.width = canvas.clientWidth * DPR;
+    canvas.height = canvas.clientHeight * DPR;
     axes.width = canvas.width;
     axes.height = canvas.height;
 }
@@ -133,7 +148,7 @@ function render() {
     let max_t = 0;
 
     for (let coords in board_state) {
-        if (!/^-?\d+:-?\d+/.exec(coords)) continue;
+        if (!COORDS_REGEX.exec(coords)) continue;
         let [l, t] = coords.split(":").map(x => +x);
         let board = board_state[coords];
         boards.push([l, t, board]);
@@ -387,17 +402,25 @@ let piece_promises = [];
 // Initial setup
 for (let piece in PIECE_ASSETS) {
     let elem = document.createElement("li");
-    elem.onclick = () => {
-        if (selected_piece === +piece) {
+    // Special case: black's blank
+    if (piece == PIECES.B_OFFSET) {
+        elem.onclick = () => {
             selected_piece = 0;
-        } else {
-            selected_piece = +piece;
-        }
-        update_pieces();
-    };
+            update_pieces();
+        };
+    } else {
+        elem.onclick = () => {
+            if (selected_piece === +piece) {
+                selected_piece = 0;
+            } else {
+                selected_piece = +piece;
+            }
+            update_pieces();
+        };
+    }
     elem.id = piece;
     elem.title = PIECE_NAMES[piece];
-    if (piece == selected_piece) elem.className = "selected";
+    if (piece == 0 || piece == PIECES.B_OFFSET) elem.className = "selected";
     let svg = document.createElement("img");
     svg.src = PIECE_ASSETS[piece];
     piece_promises.push(new Promise((resolve, reject) => {
@@ -406,20 +429,43 @@ for (let piece in PIECE_ASSETS) {
     }));
     piece_images[piece] = svg;
     elem.appendChild(svg);
-    pieces.appendChild(elem);
+    if (+piece < PIECES.B_OFFSET) {
+        pieces_white.appendChild(elem);
+    } else {
+        pieces_black.appendChild(elem);
+    }
     piece_buttons[piece] = elem;
 }
 fen_input.onchange = fen_input.onkeyup = () => {
     update_input();
 };
+
 moved_button.onclick = () => {
-    moved = !moved;
+    moved = true;
     if (moved) {
-        moved_button.className = "two toggle selected";
+        moved_button.className = "selected";
+        not_moved_button.className = "";
+        window.document.body.classList.add("moved");
     } else {
-        moved_button.className = "two toggle";
+        moved_button.className = "";
+        not_moved_button.className = "selected";
+        window.document.body.classList.remove("moved");
     }
 };
+
+not_moved_button.onclick = () => {
+    moved = false;
+    if (moved) {
+        moved_button.className = "selected";
+        not_moved_button.className = "";
+        window.document.body.classList.add("moved");
+    } else {
+        moved_button.className = "";
+        not_moved_button.className = "selected";
+        window.document.body.classList.remove("moved");
+    }
+};
+
 empty_button.onclick = () => {
     fen_input.value = `[Size "${+width_input.value}x${+height_input.value}"]
 [Board "custom"]
@@ -428,29 +474,33 @@ empty_button.onclick = () => {
 `;
     update_input();
 };
-std_button.onclick = () => {
-    width_input.value = "8";
-    height_input.value = "8";
-    fen_input.value = `[Size "8x8"]\n[Board "custom"]\n[Mode "5D"]
-[r*nbqk*bnr*/p*p*p*p*p*p*p*p*/8/8/8/8/P*P*P*P*P*P*P*P*/R*NBQK*BNR*:0:1:w]
-`;
+preset_button.onclick = () => {
+    fen_input.value = PRESETS[preset_dropdown.value];
     update_input();
-};
-t0_button.onclick = () => {
-    width_input.value = "8";
-    height_input.value = "8";
-    fen_input.value = `[Size "8x8"]\n[Board "custom"]\n[Mode "5D"]
-[r*nbqk*bnr*/p*p*p*p*p*p*p*p*/8/8/8/8/P*P*P*P*P*P*P*P*/R*NBQK*BNR*:0:0:b]
-[r*nbqk*bnr*/p*p*p*p*p*p*p*p*/8/8/8/8/P*P*P*P*P*P*P*P*/R*NBQK*BNR*:0:1:w]
-`;
-    update_input();
-};
+}
+
 space_around_button.onclick = () => {
-    space_around = !space_around;
+    space_around = true;
     if (space_around) {
         space_around_button.className = "selected";
+        edit_pieces_button.className = "";
     } else {
         space_around_button.className = "";
+        edit_pieces_button.className = "selected";
+    }
+    render();
+    update_axes();
+    return true;
+};
+
+edit_pieces_button.onclick = () => {
+    space_around = false;
+    if (space_around) {
+        space_around_button.className = "selected";
+        edit_pieces_button.className = "";
+    } else {
+        space_around_button.className = "";
+        edit_pieces_button.className = "selected";
     }
     render();
     update_axes();
@@ -474,8 +524,8 @@ window.onresize = () => {
 };
 
 canvas.onmousemove = (evt) => {
-    mouse_vx = evt.layerX * dpr;
-    mouse_vy = evt.layerY * dpr;
+    mouse_vx = evt.layerX * DPR;
+    mouse_vy = evt.layerY * DPR;
     prev_mouse_l = mouse_l;
     prev_mouse_t = mouse_t;
     update_axes();
@@ -486,16 +536,16 @@ canvas.onmousemove = (evt) => {
 
 canvas.onmousedown = (evt) => {
     mouse_down = true;
-    mouse_vx = evt.layerX * dpr;
-    mouse_vy = evt.layerY * dpr;
+    mouse_vx = evt.layerX * DPR;
+    mouse_vy = evt.layerY * DPR;
     update_axes();
     drag_piece();
 }
 
 canvas.onmouseup = (evt) => {
     mouse_down = false;
-    mouse_vx = evt.layerX * dpr;
-    mouse_vy = evt.layerY * dpr;
+    mouse_vx = evt.layerX * DPR;
+    mouse_vy = evt.layerY * DPR;
     update_axes();
 
     // TODO: do this on the second tap on mobile!

@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1 minimum-scale=1">
     <script src="src/constants.js"></script>
     <script src="src/parser.js"></script>
+    <script src="src/presets.js"></script>
     <script src="src/main.js" defer></script>
     <title>5DChess variant editor</title>
     <!-- No favicon -->
@@ -17,16 +18,42 @@
 [Size "8x8"]
 [Promotions "Q,R"]
 [r*nbqk*bnr*/p*p*p*p*p*p*p*p*/8/8/8/8/P*P*P*P*P*P*P*P*/R*NBQK*BNR*:0:1:w]</textarea>
-      <ul id="pieces">
-        <li class="two"><span class="noselect">Width:</span></li>
-        <li><input type="text" id="width" value="8"></li>
-        <li class="two"><span class="noselect">Height:</span></li>
-        <li><input type="text" id="height" value="8"></li>
-        <li class="two toggle" id="moved"><span>Moved</span></li>
-        <li class="two toggle" id="empty">Empty</li>
-        <li class="two toggle" id="standard">Standard</li>
-        <li class="three toggle" id="standard-t0">Standard T0</li>
-      </ul>
+      <div id="settings">
+        <section id="dimensions">
+          <div class="input-container">
+            <span>Width</span>
+            <input type="text" id="width" value="8">
+            <span>Height</span>
+            <input type="text" id="height" value="8">
+          </div>
+          <button id="empty">Set dimensions</button>
+        </section>
+        <section id="input-settings" class="mobile-first">
+          <span>Current mode:</span>
+          <div class="input-container">
+            <button id="edit-pieces" name="Edit pieces" class="selected">Add pieces</button>
+            <button id="space-around" name="Add boards">Add boards</button>
+          </div>
+          <span>Add next piece as:</span>
+          <div class="input-container">
+            <button id="not-moved" class="selected">Not yet moved</button>
+            <button id="moved">Already moved</button>
+          </div>
+        </section>
+        <section>
+          <span>Select preset:</span>
+          <select name="presets" id="presets">
+            <option value="Standard">Standard</option>
+            <option value="Standard - Turn Zero">Standard - Turn Zero</option>
+          </select>
+          <button id="set-preset">Load preset</button>
+        </section>
+        <!-- Screenshot button -->
+      </div>
+      <div id="pieces">
+        <ul id="pieces-black"></ul>
+        <ul id="pieces-white"></ul>
+      </div>
     </div>
     <div class="render">
       <canvas id="canvas">
@@ -35,7 +62,6 @@
       <canvas id="axes"></canvas>
       <div class="bar">
         <div id="status" class="ok">Loading...</div>
-        <div id="space-around"><button name="Add boards">Add boards</button></div>
       </div>
     </div>
   </body>
