@@ -19,10 +19,14 @@ const BOARD_MARGIN = 16 * dpr;
 const BORDER_WIDTH = 4 * dpr;
 const FILL_LIGHT = "#909090";
 const FILL_DARK = "#606060";
+const LABEL_LIGHT = "#181818";
+const LABEL_DARK = "#e0e0e0";
 const AXIS_HOVER_FILL = "#80808060";
 const FONT_SIZE = 16 * dpr;
 const AXES_MARGIN = 8 * dpr;
 const PLUS_SIZE = 6;
+const PIECE_MARGIN = 0.05;
+const LABEL_SIZE = 0.2;
 
 let space_around = false;
 let selected_piece = PIECES.BLANK;
@@ -168,6 +172,7 @@ function render() {
                     x,
                     y,
                 ]);
+                // Background
                 ctx.beginPath();
                 ctx.rect(
                     vx + x * tile_size,
@@ -177,14 +182,44 @@ function render() {
                 );
                 ctx.fillStyle = (x + y) % 2 === 0 ? FILL_LIGHT : FILL_DARK;
                 ctx.fill();
+
+                if (!space_around) {
+                    // Number
+                    if (x == 0) {
+                        ctx.font = Math.round(tile_size * LABEL_SIZE) + "px monospace";
+                        ctx.fillStyle = (x + y) % 2 === 0 ? LABEL_LIGHT : LABEL_DARK;
+                        ctx.textAlign = "left";
+                        ctx.textBaseline = "top";
+                        ctx.fillText(`${board_state.height - y}`, vx + (x + 0.05) * tile_size, vy + (y + 0.1) * tile_size);
+                    }
+                    // Letter
+                    if (y == board_state.height - 1) {
+                        ctx.font = Math.round(tile_size * LABEL_SIZE) + "px monospace";
+                        ctx.fillStyle = (x + y) % 2 === 0 ? LABEL_LIGHT : LABEL_DARK;
+                        ctx.textAlign = "right"
+                        ctx.textBaseline = "bottom";
+                        ctx.fillText(`${ALPHABET[x]}`, vx + (x + 0.95) * tile_size, vy + (y + 1) * tile_size);
+                    }
+                }
+
                 if (piece) {
-                    ctx.drawImage(
-                        piece_images[piece.id],
-                        vx + x * tile_size,
-                        vy + y * tile_size,
-                        tile_size,
-                        tile_size,
-                    );
+                    if (space_around) {
+                        ctx.drawImage(
+                            piece_images[piece.id],
+                            vx + x * tile_size,
+                            vy + y * tile_size,
+                            tile_size,
+                            tile_size,
+                        );
+                    } else {
+                        ctx.drawImage(
+                            piece_images[piece.id],
+                            Math.round(vx + (x + PIECE_MARGIN) * tile_size),
+                            Math.round(vy + (y + PIECE_MARGIN) * tile_size),
+                            Math.round(tile_size - PIECE_MARGIN * 2 * tile_size),
+                            Math.round(tile_size - PIECE_MARGIN * 2 * tile_size),
+                        );
+                    }
                 }
             }
         }
