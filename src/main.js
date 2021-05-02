@@ -32,19 +32,21 @@ const status = document.getElementById("status");
 
 const DPR = window.devicePixelRatio || 1;
 const MARGIN = 48 * DPR;
-const BOARD_MARGIN = 16 * DPR;
-const BORDER_WIDTH = 4 * DPR;
+const BOARD_MARGIN = 32 * DPR;
+const BORDER_WIDTH = 8 * DPR;
 const FONT_SIZE = 16 * DPR;
 const AXES_MARGIN = 8 * DPR;
 const PLUS_SIZE = 6;
 const PIECE_MARGIN = 0.05;
 const LABEL_SIZE = 0.2;
 
-const FILL_LIGHT = "#909090";
-const FILL_DARK = "#606060";
+const FILL_LIGHT = "#EDBEA1";
+const FILL_DARK = "#A37583";
 const LABEL_LIGHT = "#181818";
 const LABEL_DARK = "#e0e0e0";
-const AXIS_HOVER_FILL = "#80808060";
+const AXIS_HOVER_FILL = "#60577060";
+const BOARD_OUTLINE_DARK = "#301014";
+const BOARD_OUTLINE_LIGHT = "#4D4861";
 
 const COORDS_REGEX = /^-?\d+:-?\d+/;
 
@@ -178,11 +180,13 @@ function render() {
     let sy = canvas.height / 2 - board_size * (max_l - min_l + 1) / 2;
     let tile_size = Math.round((board_size - BOARD_MARGIN) / Math.max(board_state.width, board_state.height));
 
+    let dv = (board_size - BOARD_MARGIN - tile_size * Math.max(board_state.width, board_state.height)) / 2;
+
     position_data = {min_l, max_l, min_t, max_t, board_size, sx, sy, tile_size};
 
     for (let [l, t, board] of boards) {
-        let vx = Math.round(sx + (t - min_t) * board_size + BOARD_MARGIN / 2);
-        let vy = Math.round(sy + (l - min_l) * board_size + BOARD_MARGIN / 2);
+        let vx = Math.round(sx + (t - min_t) * board_size + BOARD_MARGIN / 2 + dv);
+        let vy = Math.round(sy + (l - min_l) * board_size + BOARD_MARGIN / 2 + dv);
         for (let y = 0; y < board_state.height; y++) {
             for (let x = 0; x < board_state.width; x++) {
                 let piece = board[y][x];
@@ -236,6 +240,24 @@ function render() {
                             tile_size,
                         );
                     } else {
+                        if (PIECES_MOVED_NEEDED[piece.id]) {
+                            if (tile_size > 24) {
+                                ctx.beginPath();
+                                ctx.arc(
+                                    vx + (x + .5) * tile_size,
+                                    vy + (y + .5) * tile_size,
+                                    tile_size / 2 - 6,
+                                    tile_size / 2 - 6,
+                                    0,
+                                    Math.PI * 2,
+                                );
+                                ctx.strokeStyle = piece.moved ? "#30101480" : "#F2EDF080";
+                                ctx.lineWidth = 4;
+                                ctx.stroke();
+                            }
+                            ctx.filter = `drop-shadow(0px 0px ${tile_size / 6}px ${piece.moved ? "#301014A0" : "#F2EDF0A0"})`;
+                        }
+
                         ctx.drawImage(
                             piece_images[piece.id],
                             Math.round(vx + (x + PIECE_MARGIN) * tile_size),
@@ -243,29 +265,7 @@ function render() {
                             Math.round(tile_size - PIECE_MARGIN * 2 * tile_size),
                             Math.round(tile_size - PIECE_MARGIN * 2 * tile_size),
                         );
-                    }
-                }
-            }
-        }
-
-        if (!space_around) {
-            for (let y = 0; y < board_state.height; y++) {
-                for (let x = 0; x < board_state.width; x++) {
-                    let piece = board[y][x];
-                    if (piece) {
-                        ctx.beginPath();
-                        ctx.rect(
-                            vx + x * tile_size + 2,
-                            vy + y * tile_size + 2,
-                            tile_size - 4,
-                            tile_size - 4
-                        );
-                        ctx.strokeStyle = piece.moved ? "#000000" : "#ffffff";
-                        if (canvas.width < 600) {
-                            ctx.strokeStyle = piece.moved ? "#00000080" : "#ffffff80";
-                        }
-                        ctx.lineWidth = 2;
-                        if (PIECES_MOVED_NEEDED[piece.id]) ctx.stroke();
+                        ctx.filter = "none";
                     }
                 }
             }
@@ -278,7 +278,7 @@ function render() {
             board_state.width * tile_size + BORDER_WIDTH,
             board_state.height * tile_size + BORDER_WIDTH,
         );
-        ctx.strokeStyle = "#202a20";
+        ctx.strokeStyle = t % 2 === 1 ? BOARD_OUTLINE_DARK : BOARD_OUTLINE_LIGHT;
         ctx.lineWidth = BORDER_WIDTH;
         ctx.stroke();
         render_axes();

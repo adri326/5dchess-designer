@@ -23,8 +23,35 @@ firefox ./index.html
 php -S localhost:8080
 firefox http://localhost:8080/
 ```
+## Usage
 
-## Using the generated 5DFEN
+The UI is organized in four sections:
+
+- The preview (top-right on desktop, 1st on mobile)
+- The piece selection menu and status bar (bottom-right on desktop, 2nd on mobile)
+- The settings section (bottom-left on desktop, 3rd on mobile)
+- The 5DFEN input box (top-left on desktop, 4th on mobile)
+
+The preview shows a preview of the 5DFEN inputted in the 5DFEN input box. It can also be interacted with to add boards or pieces.
+
+The piece selection menu lets you select which piece to add. Pieces can only be placed on the boards if you currently are in the "Add pieces" mode (set in the settings section).
+The red cross in the piece selection menu lets you remove pieces from the boards, if it also only effective in the "Add pieces" mode.
+
+The settings section is organized in 3 sub-sections:
+
+- Width and height input: input your desired width and height in the boxes and hit "Set dimensions" to choose a new board size
+- Mouse behavior:
+  - The "Current mode" buttons allows you to switch between the "Add pieces" mode, which lets you place and remove pieces, and the "Add boards", which lets you add new boards.
+  - The "Add next piece as" buttons allows you to tailor the behavior of pawns, kings and rooks, as these pieces behave differently based on whether or not they had already moved. The next pieces that you will place will have the chosen behavior.
+- Presets: select a preset from the drop-down and press "Load preset". The preset will overwrite the current position.
+
+"Not yet moved" pieces whose behavior depend on having been moved or not (ie. Pawns, Rooks and Kings) will be highlighted with a white glow and circle.
+"Already moved" pieces will be highlighted with a black glow and circle.
+
+The 5DFEN input box allows you to edit the raw 5DFEN. You can type in it, copy or paste things in it.
+Syntax errors in the 5DFEN will be reported in the status box.
+
+### Using the generated 5DFEN
 
 This client can be used to preview the 5DFEN, but it isn't designed to be used to play on it.
 You will find a full list of the open source clients and tools that can be used to import these on the [Open 5D Chess discord server](https://discord.chessin5d.net/); here are some of them:
