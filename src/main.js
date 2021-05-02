@@ -240,6 +240,24 @@ function render() {
                             tile_size,
                         );
                     } else {
+                        if (PIECES_MOVED_NEEDED[piece.id]) {
+                            if (tile_size > 24) {
+                                ctx.beginPath();
+                                ctx.arc(
+                                    vx + (x + .5) * tile_size,
+                                    vy + (y + .5) * tile_size,
+                                    tile_size / 2 - 6,
+                                    tile_size / 2 - 6,
+                                    0,
+                                    Math.PI * 2,
+                                );
+                                ctx.strokeStyle = piece.moved ? "#30101480" : "#F2EDF080";
+                                ctx.lineWidth = 4;
+                                ctx.stroke();
+                            }
+                            ctx.filter = `drop-shadow(0px 0px ${tile_size / 6}px ${piece.moved ? "#301014A0" : "#F2EDF0A0"})`;
+                        }
+
                         ctx.drawImage(
                             piece_images[piece.id],
                             Math.round(vx + (x + PIECE_MARGIN) * tile_size),
@@ -247,29 +265,7 @@ function render() {
                             Math.round(tile_size - PIECE_MARGIN * 2 * tile_size),
                             Math.round(tile_size - PIECE_MARGIN * 2 * tile_size),
                         );
-                    }
-                }
-            }
-        }
-
-        if (!space_around) {
-            for (let y = 0; y < board_state.height; y++) {
-                for (let x = 0; x < board_state.width; x++) {
-                    let piece = board[y][x];
-                    if (piece) {
-                        ctx.beginPath();
-                        ctx.rect(
-                            vx + x * tile_size + 2,
-                            vy + y * tile_size + 2,
-                            tile_size - 4,
-                            tile_size - 4
-                        );
-                        ctx.strokeStyle = piece.moved ? "#000000" : "#ffffff";
-                        if (canvas.width < 600) {
-                            ctx.strokeStyle = piece.moved ? "#00000080" : "#ffffff80";
-                        }
-                        ctx.lineWidth = 2;
-                        if (PIECES_MOVED_NEEDED[piece.id]) ctx.stroke();
+                        ctx.filter = "none";
                     }
                 }
             }

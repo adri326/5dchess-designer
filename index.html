@@ -21,32 +21,32 @@
       <div id="settings">
         <section id="dimensions"> <!-- Dimension input -->
           <div class="input-container">
-            <span>Width</span>
+            <span title="Set the width for the boards. Only effective once 'Set dimensions' is pressed!">Width</span>
             <input type="text" id="width" value="8">
-            <span>Height</span>
+            <span title="Set the height for the boards. Only effective once 'Set dimensions' is pressed!">Height</span>
             <input type="text" id="height" value="8">
           </div>
-          <button id="empty">Set dimensions</button>
+          <button id="empty" title="Sets the desired width and height for the boards. Empties the boards!">Set dimensions</button>
         </section>
         <section id="input-settings" class="mobile-first"> <!-- Mode settings -->
-          <span>Current mode:</span>
+          <span title="Chooses the current mode between 'Edit pieces' and 'Add boards'. The current mode does not automatically go back to 'Add pieces'. Hover over either of the buttons for more info!">Current mode:</span>
           <div class="input-container">
-            <button id="edit-pieces" name="Edit pieces" class="selected">Add pieces</button>
-            <button id="space-around" name="Add boards">Add boards</button>
+            <button id="edit-pieces" name="Edit pieces" class="selected" title="The 'Add pieces' mode allows you to place/remove pieces on the boards.">Add pieces</button>
+            <button id="space-around" name="Add boards" title="The 'Add boards' mode allows you to add new boards. You cannot place pieces while in this mode.">Add boards</button>
           </div>
-          <span>Add next piece as:</span>
+          <span title="Selects whether or not the next placed piece will have the 'moved' tag associated with it. Hover over either of the buttons for more info!">Add next piece as:</span>
           <div class="input-container">
-            <button id="not-moved" class="selected">Not yet moved</button>
-            <button id="moved">Already moved</button>
+            <button id="not-moved" class="selected" title="A piece that wasn't touched/moved yet, indicated by a white highlight. Pawns that weren't touched yet can advance two tiles at once and kings that weren't touched yet can castle towards rooks that weren't touched yet.">Not yet moved</button>
+            <button id="moved" title="A piece that was already touched/moved, indicated by a black highlight. Pawns that were already touched cannot advance two tiles at once and kings that were already touched cannot castle.">Already moved</button>
           </div>
         </section>
         <section> <!-- Presets -->
-          <span>Select preset:</span>
-          <select name="presets" id="presets">
+          <span title="Select a preset from the drop-down and hit 'Load preset' to load a preset!">Select preset:</span>
+          <select name="presets" id="presets" title="Select a preset from the drop-down and hit 'Load preset' to load a preset!">
             <option value="Standard">Standard</option>
             <option value="Standard - Turn Zero">Standard - Turn Zero</option>
           </select>
-          <button id="set-preset">Load preset</button>
+          <button id="set-preset" title="Overwrites the current position with the chosen preset.">Load preset</button>
         </section>
         <!-- TODO: Screenshot button -->
       </div>
@@ -60,7 +60,7 @@
       <!-- Piece selection palette: -->
       <div id="pieces">
         <div id="pieces-none-container">
-          <ul id="pieces-none"><li id="0" class="selected" title="No piece" onclick="selected_piece = 0; update_pieces();"><img src="cross.svg" /></li></ul>
+          <ul id="pieces-none"><li id="0" class="selected" title="No piece (erase)" onclick="selected_piece = 0; update_pieces();"><img src="cross.svg" /></li></ul>
         </div>
         <div class="mobile-vertical">
           <ul id="pieces-white"></ul>
