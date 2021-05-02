@@ -32,19 +32,21 @@ const status = document.getElementById("status");
 
 const DPR = window.devicePixelRatio || 1;
 const MARGIN = 48 * DPR;
-const BOARD_MARGIN = 16 * DPR;
-const BORDER_WIDTH = 4 * DPR;
+const BOARD_MARGIN = 32 * DPR;
+const BORDER_WIDTH = 8 * DPR;
 const FONT_SIZE = 16 * DPR;
 const AXES_MARGIN = 8 * DPR;
 const PLUS_SIZE = 6;
 const PIECE_MARGIN = 0.05;
 const LABEL_SIZE = 0.2;
 
-const FILL_LIGHT = "#909090";
-const FILL_DARK = "#606060";
+const FILL_LIGHT = "#EDBEA1";
+const FILL_DARK = "#A37583";
 const LABEL_LIGHT = "#181818";
 const LABEL_DARK = "#e0e0e0";
-const AXIS_HOVER_FILL = "#80808060";
+const AXIS_HOVER_FILL = "#60577060";
+const BOARD_OUTLINE_DARK = "#301014";
+const BOARD_OUTLINE_LIGHT = "#4D4861";
 
 const COORDS_REGEX = /^-?\d+:-?\d+/;
 
@@ -178,11 +180,13 @@ function render() {
     let sy = canvas.height / 2 - board_size * (max_l - min_l + 1) / 2;
     let tile_size = Math.round((board_size - BOARD_MARGIN) / Math.max(board_state.width, board_state.height));
 
+    let dv = (board_size - BOARD_MARGIN - tile_size * Math.max(board_state.width, board_state.height)) / 2;
+
     position_data = {min_l, max_l, min_t, max_t, board_size, sx, sy, tile_size};
 
     for (let [l, t, board] of boards) {
-        let vx = Math.round(sx + (t - min_t) * board_size + BOARD_MARGIN / 2);
-        let vy = Math.round(sy + (l - min_l) * board_size + BOARD_MARGIN / 2);
+        let vx = Math.round(sx + (t - min_t) * board_size + BOARD_MARGIN / 2 + dv);
+        let vy = Math.round(sy + (l - min_l) * board_size + BOARD_MARGIN / 2 + dv);
         for (let y = 0; y < board_state.height; y++) {
             for (let x = 0; x < board_state.width; x++) {
                 let piece = board[y][x];
@@ -278,7 +282,7 @@ function render() {
             board_state.width * tile_size + BORDER_WIDTH,
             board_state.height * tile_size + BORDER_WIDTH,
         );
-        ctx.strokeStyle = "#202a20";
+        ctx.strokeStyle = t % 2 === 1 ? BOARD_OUTLINE_DARK : BOARD_OUTLINE_LIGHT;
         ctx.lineWidth = BORDER_WIDTH;
         ctx.stroke();
         render_axes();
