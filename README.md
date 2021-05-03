@@ -45,8 +45,8 @@ The settings section is organized in 3 sub-sections:
   - The "Add next piece as" buttons allows you to tailor the behavior of pawns, kings and rooks, as these pieces behave differently based on whether or not they had already moved. The next pieces that you will place will have the chosen behavior.
 - Presets: select a preset from the drop-down and press "Load preset". The preset will overwrite the current position.
 
-"Not yet moved" pieces whose behavior depend on having been moved or not (ie. Pawns, Rooks and Kings) will be highlighted with a white glow and circle.
-"Already moved" pieces will be highlighted with a black glow and circle.
+"Not yet moved" pieces whose behavior depend on having been moved or not (ie. Pawns, Rooks and Kings) will have no highlight.
+"Already moved" pieces will be highlighted with a black shadow and a black circle.
 
 The 5DFEN input box allows you to edit the raw 5DFEN. You can type in it, copy or paste things in it.
 Syntax errors in the 5DFEN will be reported in the status box.

@@ -240,8 +240,8 @@ function render() {
                             tile_size,
                         );
                     } else {
-                        if (PIECES_MOVED_NEEDED[piece.id]) {
-                            if (tile_size > 24 && piece.moved) {
+                        if (PIECES_MOVED_NEEDED[piece.id] && piece.moved) {
+                            if (tile_size > 24) {
                                 ctx.beginPath();
                                 ctx.arc(
                                     vx + (x + .5) * tile_size,
