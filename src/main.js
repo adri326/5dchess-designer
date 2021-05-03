@@ -241,7 +241,7 @@ function render() {
                         );
                     } else {
                         if (PIECES_MOVED_NEEDED[piece.id]) {
-                            if (tile_size > 24) {
+                            if (tile_size > 24 && piece.moved) {
                                 ctx.beginPath();
                                 ctx.arc(
                                     vx + (x + .5) * tile_size,
@@ -255,7 +255,7 @@ function render() {
                                 ctx.lineWidth = 4;
                                 ctx.stroke();
                             }
-                            ctx.filter = `drop-shadow(0px 0px ${tile_size / 6}px ${piece.moved ? "#301014A0" : "#F2EDF0A0"})`;
+                            ctx.filter = `drop-shadow(0px 0px ${tile_size / 6}px ${piece.moved ? "#301014A0" : "#F2EDF0C0"})`;
                         }
 
                         ctx.drawImage(
@@ -278,7 +278,7 @@ function render() {
             board_state.width * tile_size + BORDER_WIDTH,
             board_state.height * tile_size + BORDER_WIDTH,
         );
-        ctx.strokeStyle = t % 2 === 1 ? BOARD_OUTLINE_DARK : BOARD_OUTLINE_LIGHT;
+        ctx.strokeStyle = t % 2 === 0 ? BOARD_OUTLINE_LIGHT : BOARD_OUTLINE_DARK;
         ctx.lineWidth = BORDER_WIDTH;
         ctx.stroke();
         render_axes();

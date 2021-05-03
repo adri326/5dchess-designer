@@ -22,7 +22,7 @@ body {
     min-height: 100vh;
     width: var(--controls-width);
     flex-shrink: 0;
-    background: #202a20;
+    background: #262123;
     color: white;
     box-shadow: -12px 0px 12px 12px rgba(0, 0, 0, 0.4);
     overflow: hidden;
@@ -234,7 +234,7 @@ section > .input-container {
 
 .bar {
     flex-grow: 0;
-    background: #202a20;
+    background: #262123;
     height: var(--status-height);
     box-sizing: border-box;
     display: flex;
